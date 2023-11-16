@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int        @id @default(autoincrement())
+  email    String     @unique
+  name     String
+  role     Role       @default(STUDENT)
+  Post     Post[]
+  Progress Progress[]
+  Lesson   Lesson[]
+  Calendar Calendar[]
+}
+
+enum Role {
+  TEACHER
+  STUDENT
+  DIRECTOR
+  ADMIN
+}
+
+model College {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  Course    Course[]
+}
+
+model Course {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  thumb     String
+  College   College  @relation(fields: [CollegeId], references: [id])
+  CollegeId Int
+  Post      Post[]
+  Lesson    Lesson[]
+  Task      Task[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  published Boolean  @default(false)
+  college   User     @relation(fields: [collegeId], references: [id])
+  collegeId Int
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  Int
+}
+
+model Lesson {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String
+  title       String
+  urlContent  String
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    Int
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    Int
+}
+
+model Task {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  name      String
+  finish    Boolean    @default(false)
+  student   Course     @relation(fields: [studentID], references: [id])
+  studentID Int
+  Progress  Progress[]
+  Calendar  Calendar[]
+}
+
+model Calendar {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  student   User     @relation(fields: [studentID], references: [id])
+  studentID Int
+  task      Task     @relation(fields: [taskId], references: [id])
+  taskId    Int
+}
+
+model Progress {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  task      Task     @relation(fields: [taskId], references: [id])
+  taskId    Int
+  student   User     @relation(fields: [studentId], references: [id])
+  studentId Int
+  finish    Boolean  @default(false)
+}

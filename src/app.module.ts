@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { AppService } from './app.service';
 
@@ -11,6 +12,7 @@ import { CourseModule } from './course/course.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { CollegeModule } from './college/college.module';
 import { CalendarModule } from './calendar/calendar.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,7 +22,9 @@ import { CalendarModule } from './calendar/calendar.module';
     CourseModule,
     PostModule,
     TaskModule,
-    UserModule
+    UserModule,
+    AuthModule,
+    ConfigModule.forRoot()
   ],
   controllers: [AppController],
   providers: [AppService],

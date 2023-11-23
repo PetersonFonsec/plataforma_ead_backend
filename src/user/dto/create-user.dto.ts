@@ -17,7 +17,4 @@ export class CreateUserDTO {
 
     @IsStrongPassword(rulesPassword)
     password: string;
-
-    @IsStrongPassword(rulesPassword)
-    confirmPassword: string;
 }

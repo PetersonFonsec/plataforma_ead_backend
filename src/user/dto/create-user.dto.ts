@@ -1,6 +1,6 @@
 import { IsString, IsStrongPassword, IsEmail } from 'class-validator';
 
-const rulesPassword = {
+export const rulesPassword = {
     minLength: 8,
     minNumbers: 1,
     minSymbols: 1,

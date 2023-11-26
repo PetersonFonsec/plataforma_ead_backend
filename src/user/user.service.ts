@@ -12,6 +12,7 @@ export class UserService {
         email: true,
         name: true,
         role: true,
+        photo: true,
         id: true,
     }
 
@@ -24,7 +25,7 @@ export class UserService {
 
         if (userExist) {
             throw new BadRequestException(
-                `there is already a user with this email: ${email}`,
+                `já existe um usuario com esse email: ${email}`,
             );
         }
 
@@ -60,14 +61,6 @@ export class UserService {
             return this.prisma.user.update({ where: { id }, data, select: this.selectFields });
     }
 
-    async forgetPassword(id: number, newPassword: string): Promise<any> {
-        const user = await this.prisma.user.findUnique({ where: { id } });
-        if (!user) throw new NotFoundException(`User not found`);
-
-        const password = bcrypt.hashSync(newPassword, 8);
-        return this.prisma.user.update({ where: { id }, data: { password }, select: this.selectFields });
-    }
-
     async updatePassword(fields: UpdatePasswordDTO): Promise<any> {
         let { password, current_password, email } = fields;
         await this.validPassword(current_password, email);
@@ -83,11 +76,14 @@ export class UserService {
     }
 
     async validPassword(password, email) {
-        const user = await this.prisma.user.findUnique({ where: { email }, select: { password: true } });
-        const matchPassword = await bcrypt.compare(password, user.password);
+        const user = await this.prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            throw new NotFoundException(`Senha ou Email incorretos`);
+        }
 
-        if (!matchPassword || !user) {
-            throw new NotFoundException(`Dados incorretos`);
+        const matchPassword = await bcrypt.compare(password, user.password);
+        if (!matchPassword) {
+            throw new NotFoundException(`Senha ou Email incorretos`);
         }
 
         return user;

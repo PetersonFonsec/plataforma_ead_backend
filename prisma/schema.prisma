@@ -20,6 +20,8 @@ model User {
   Progress  Progress[]
   Lesson    Lesson[]
   Calendar  Calendar[]
+  College   College    @relation(fields: [CollegeId], references: [id])
+  CollegeId Int
 }
 
 enum Role {
@@ -35,6 +37,7 @@ model College {
   updatedAt DateTime @updatedAt
   name      String
   Course    Course[]
+  User      User[]
 }
 
 model Course {

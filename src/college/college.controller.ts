@@ -8,6 +8,7 @@ import { collegeCreateDTO } from './dto/college-create.dto';
 import { CollegeService } from './college.service';
 import { Roles } from 'src/shared/enums/role.enum';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { RegisterStudiantDTO } from './dto/register-student.dto';
 
 @Controller("college")
 @UseGuards(AuthGuard, RolesGuard)
@@ -18,6 +19,12 @@ export class CollegeController {
     @RolesWithPermission([Roles.DIRECTOR])
     create(@Body() college: collegeCreateDTO, @User() user: UserTokenI): Promise<any> {
         return this.collegeService.create(college, user);
+    }
+
+    @Post("/user")
+    @RolesWithPermission([Roles.DIRECTOR, Roles.ADMIN])
+    registerUser(@Body() college: RegisterStudiantDTO): Promise<any> {
+        return this.collegeService.registerUser(college);
     }
 
     @Get()

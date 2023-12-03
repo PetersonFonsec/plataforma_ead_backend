@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
+import { UserService } from 'src/user/user.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateUserDTO } from 'src/user/dto/create-user.dto';
 import { collegeCreateDTO } from './dto/college-create.dto';
 import { UserTokenI } from 'src/shared/interfaces/user-token';
-import { UserService } from 'src/user/user.service';
+import { RegisterStudiantDTO } from "./dto/register-student.dto";
 
 @Injectable()
 export class CollegeService {
@@ -18,12 +18,23 @@ export class CollegeService {
 
     constructor(private prisma: PrismaService, private userService: UserService) { }
 
-    async create(college: collegeCreateDTO, user: UserTokenI) {
-        return this.prisma.college.create({
+    async create({ name, thumb, primaryColor, secundaryColor }: collegeCreateDTO, user: UserTokenI) {
+        const collegeCreate = await this.prisma.college.create({
             data: {
-                ...college,
+                name,
                 user: {
                     connect: { email: user.email }
+                },
+            }
+        });
+
+        return this.prisma.collegeStyle.create({
+            data: {
+                thumb,
+                primaryColor,
+                secundaryColor,
+                college: {
+                    connect: { id: collegeCreate.id }
                 },
             }
         });
@@ -47,5 +58,22 @@ export class CollegeService {
 
         if (!user) throw new NotFoundException(`College não encontrado`);
         return user;
+    }
+
+    async registerUser({ email, documentNumber, collegeId, role }: RegisterStudiantDTO) {
+        const user = { email, documentNumber, password: "", name: "", role };
+        const { id } = await this.userService.createUser(user);
+
+        return this.prisma.collegeStudent.create({
+            data: {
+                user: {
+                    connect: { id }
+                },
+                college: {
+                    connect: { id: collegeId }
+                },
+
+            }
+        });
     }
 }

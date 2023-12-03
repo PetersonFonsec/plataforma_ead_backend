@@ -40,9 +40,6 @@ model College {
   user           User             @relation(fields: [userId], references: [id])
   userId         Int
   name           String
-  primaryColor   String           @default("")
-  secundaryColor String           @default("")
-  thumb          String           @default("")
   Course         Course[]
   CollegeStyle   CollegeStyle[]
   CollegeStudent CollegeStudent[]
@@ -62,11 +59,11 @@ model CollegeStyle {
   id             Int      @id @default(autoincrement())
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  primaryColor   String
-  secundaryColor String
-  thumb          String
-  College        College  @relation(fields: [CollegeId], references: [id])
-  CollegeId      Int
+  primaryColor   String   @default("")
+  secundaryColor String   @default("")
+  thumb          String   @default("")
+  college        College  @relation(fields: [collegeId], references: [id])
+  collegeId      Int
 }
 
 model Course {
@@ -75,8 +72,8 @@ model Course {
   updatedAt DateTime @updatedAt
   name      String
   thumb     String
-  College   College  @relation(fields: [CollegeId], references: [id])
-  CollegeId Int
+  college   College  @relation(fields: [collegeId], references: [id])
+  collegeId Int
   Post      Post[]
   Lesson    Lesson[]
   Task      Task[]

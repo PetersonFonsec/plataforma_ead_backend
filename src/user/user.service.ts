@@ -39,16 +39,9 @@ export class UserService {
         });
     }
 
-    async activeUser(payload: ActiveUserDTO) {
-        let { id, email, documentNumber } = payload;
-
-        if (id && email && documentNumber) {
-            throw new BadRequestException(`Campos enviados estão invalidos`);
-        }
-
-        const user = await this.find(payload);
-
-        return this.prisma.user.update({ where: { id: user.id }, data: { active: true } });
+    async activeUser({ id }: ActiveUserDTO) {
+        await this.find({ id });
+        return this.prisma.user.update({ where: { id }, data: { active: true } });
     }
 
     async getAllUser(): Promise<any[]> {

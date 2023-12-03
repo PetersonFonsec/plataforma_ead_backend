@@ -1,11 +1,17 @@
-import { IsEmail, IsNumber } from "class-validator";
+import { IsEmail, IsNumber, IsOptional } from "class-validator";
 
 export class ConsultUserDTO {
+    @IsOptional()
     @IsEmail()
-    email: string;
+    email?: string;
 
+    @IsOptional()
     @IsNumber()
-    Id: string;
+    id?: number;
+
+    @IsOptional()
+    @IsNumber()
+    documentNumber?: string;
 }
 
 export class ConsultUserResponse {

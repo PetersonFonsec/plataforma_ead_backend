@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common"
+import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException, forwardRef } from "@nestjs/common"
 import { JwtService } from "@nestjs/jwt"
 
 import { PrismaService } from "src/prisma/prisma.service"
@@ -16,6 +16,8 @@ export class AuthService {
     ) { }
 
     async createToken(user) {
+        delete user.password;
+
         const access_token = this.jwtService.sign(user, {
             expiresIn: process.env.EXPIRES_IN,
             subject: user.id.toString()
@@ -24,7 +26,7 @@ export class AuthService {
         return { access_token }
     }
 
-    async checkToken(token: string) {
+    checkToken(token: string) {
         try {
             return this.jwtService.verify(token)
         } catch (error) {
@@ -32,16 +34,25 @@ export class AuthService {
         }
     }
 
+    decodeToken(token: string) {
+        try {
+            return this.jwtService.decode(token)
+        } catch (error) {
+            throw new BadRequestException(error)
+        }
+    }
+
+
     async login({ password, email }: AuthLoginDTO) {
         const user = await this.userService.validPassword(password, email);
         const { access_token } = await this.createToken(user);
         return { email, name: user.name, access_token, id: user.id, };
     }
 
-    async register({ email, password, name }: AuthRegisterDTO) {
-        const user = await this.userService.createUser({ email, password, name });
+    async register(payload: AuthRegisterDTO) {
+        const user = await this.userService.createUser(payload, true);
         const { access_token } = await this.createToken(user);
-        return { email, name, access_token, id: user.id, };
+        return { email: user.email, name: user.name, access_token, id: user.id, };
     }
 
     async forgetPassword({ email }: AuthForgetDTO): Promise<any> {

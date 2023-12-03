@@ -1,24 +1,37 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePasswordDTO } from './dto/update-password.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { Roles } from 'src/shared/enums/role.enum';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller("users")
+@UseGuards(AuthGuard)
 export class UserController {
     constructor(private readonly userService: UserService) { }
 
-    @Post()
-    create(@Body() user: CreateUserDTO): Promise<{
-        id: number;
-        name: string;
-    }> {
+    @Post("director")
+    createDirector(@Body() user: CreateUserDTO): Promise<any> {
+        user.role = Roles.DIRECTOR;
+        return this.userService.createUser(user);
+    }
+
+    @Post("student")
+    createStudent(@Body() user: CreateUserDTO): Promise<any> {
+        user.role = Roles.STUDENT;
+        return this.userService.createUser(user);
+    }
+
+    @Post("teacher")
+    createTeacher(@Body() user: CreateUserDTO): Promise<any> {
+        user.role = Roles.TEACHER;
         return this.userService.createUser(user);
     }
 
     @Get('/:id')
     get(@Param('id') id: string): Promise<any> {
-        return this.userService.findUser(parseInt(id));
+        return this.userService.find({ id });
     }
 
     @Get()

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { AppService } from './app.service';
@@ -22,8 +22,8 @@ import { AuthModule } from './auth/auth.module';
     CourseModule,
     PostModule,
     TaskModule,
-    UserModule,
-    AuthModule,
+    forwardRef(() => AuthModule),
+    forwardRef(() => UserModule),
     ConfigModule.forRoot()
   ],
   controllers: [AppController],

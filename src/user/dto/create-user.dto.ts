@@ -1,4 +1,5 @@
-import { IsString, IsStrongPassword, IsEmail } from 'class-validator';
+import { IsString, IsStrongPassword, IsEmail, IsOptional } from 'class-validator';
+import { Roles } from '../../shared/enums/role.enum';
 
 export const rulesPassword = {
     minLength: 8,
@@ -15,6 +16,12 @@ export class CreateUserDTO {
     @IsEmail()
     email: string;
 
+    @IsString()
+    documentNumber: string;
+
     @IsStrongPassword(rulesPassword)
     password: string;
+
+    @IsOptional()
+    role: Roles = Roles.STUDENT;
 }

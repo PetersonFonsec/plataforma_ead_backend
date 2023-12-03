@@ -1,10 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDTO } from './dto/create-user.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { UpdateUserDTO } from './dto/update-user.dto';
+
 import { UpdatePasswordDTO } from './dto/update-password.dto';
 import { ConsultUserResponse } from './dto/consult-user.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
+import { ActiveUserDTO } from './dto/active-user.dto';
 
 @Injectable()
 export class UserService {
@@ -18,10 +20,10 @@ export class UserService {
 
     constructor(private prisma: PrismaService) { }
 
-    async createUser({ email, password, name }: CreateUserDTO) {
-        const userExist = await this.prisma.user.findUnique({ where: { email }, select: this.selectFields });
+    async createUser(user: CreateUserDTO, active = false) {
+        let { password, email } = user;
 
-        password = bcrypt.hashSync(password, 8);
+        const userExist = await this.prisma.user.findUnique({ where: { email }, select: this.selectFields });
 
         if (userExist) {
             throw new BadRequestException(
@@ -29,35 +31,34 @@ export class UserService {
             );
         }
 
+        user.password = bcrypt.hashSync(password, 8);
+
         return this.prisma.user.create({
-            data: {
-                name,
-                email,
-                password
-            },
-            select: {
-                id: true,
-                name: true
-            }
+            data: { ...user, active },
+            select: this.selectFields
         });
     }
 
-    async findUser(id: number): Promise<any> {
-        const user = await this.prisma.user.findUnique({ where: { id }, select: this.selectFields });
-        if (!user) throw new NotFoundException(`Não encontrado usuario com id: ${id}`);
-        return user;
+    async activeUser(payload: ActiveUserDTO) {
+        let { id, email, documentNumber } = payload;
+
+        if (id && email && documentNumber) {
+            throw new BadRequestException(`Campos enviados estão invalidos`);
+        }
+
+        const user = await this.find(payload);
+
+        return this.prisma.user.update({ where: { id: user.id }, data: { active: true } });
     }
 
     async getAllUser(): Promise<any[]> {
-        return await this.prisma.user.findMany({
-            select: this.selectFields
-        });
+        return await this.prisma.user.findMany({ where: { active: true }, select: this.selectFields });
     }
 
     async updateUser(id: number, data: UpdateUserDTO): Promise<any> {
         delete data.password;
 
-        if (! await this.existUser(id))
+        if (! await this.find({ id }))
             return this.prisma.user.update({ where: { id }, data, select: this.selectFields });
     }
 
@@ -71,7 +72,7 @@ export class UserService {
     }
 
     async deleteUser(id: number): Promise<ConsultUserResponse> {
-        if (await this.existUser(id))
+        if (await this.find({ id }))
             return this.prisma.user.delete({ where: { id }, select: this.selectFields });
     }
 
@@ -89,7 +90,9 @@ export class UserService {
         return user;
     }
 
-    async existUser(id: number) {
-        return this.findUser(id);
+    async find(where: any) {
+        const user = await this.prisma.user.findUnique({ where, select: this.selectFields });
+        if (!user) throw new NotFoundException(`Usuario não encontrado`);
+        return user;
     }
 }

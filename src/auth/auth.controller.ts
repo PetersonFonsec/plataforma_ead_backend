@@ -5,7 +5,7 @@ import { AuthRegisterDTO } from "./dto/authRegister.dto";
 import { AuthForgetDTO } from "./dto/authForget.dto";
 import { AuthLoginDTO } from "./dto/authLogin.dto";
 import { AuthService } from "./auth.service";
-import { Roles } from "src/shared/enums/role.enum";
+import { Roles } from "../shared/enums/role.enum";
 import { AuthGuard } from "./auth.guard";
 @Controller("auth")
 export class AuthController {

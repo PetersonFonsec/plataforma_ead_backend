@@ -1,10 +1,10 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException, forwardRef } from "@nestjs/common"
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common"
 import { JwtService } from "@nestjs/jwt"
 
-import { PrismaService } from "src/prisma/prisma.service"
+import { PrismaService } from "../prisma/prisma.service"
 import { AuthLoginDTO } from "./dto/authLogin.dto"
 import { AuthForgetDTO } from "./dto/authForget.dto";
-import { UserService } from "src/user/user.service";
+import { UserService } from "../user/user.service";
 import { AuthRegisterDTO } from "./dto/authRegister.dto";
 
 @Injectable()

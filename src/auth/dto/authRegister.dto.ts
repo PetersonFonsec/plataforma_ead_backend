@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString, IsStrongPassword } from "class-validator";
-import { Roles } from "src/shared/enums/role.enum";
-import { rulesPassword } from "src/user/dto/create-user.dto";
+import { Roles } from "../../shared/enums/role.enum";
+import { rulesPassword } from "../../user/dto/create-user.dto";
 
 export class AuthRegisterDTO {
     @IsNotEmpty()

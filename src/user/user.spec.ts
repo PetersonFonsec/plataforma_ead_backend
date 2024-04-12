@@ -1,11 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { TestingModule, Test } from '@nestjs/testing';
+import * as bcrypt from 'bcrypt';
+
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from './user.service';
 import { USER } from './user.mock';
-
-import * as bcrypt from 'bcrypt';
-import { UserModule } from './user.module';
 
 describe('Auth Service - ', () => {
   let userService: UserService;

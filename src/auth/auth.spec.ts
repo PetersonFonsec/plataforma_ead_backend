@@ -55,7 +55,7 @@ describe('Auth Service - ', () => {
   });
 
   describe('login - ', () => {
-    it('Should create token', (done) => {
+    it('Should create token when login is success', (done) => {
       jest.spyOn(prismaMock.user, 'findUnique').mockImplementation(() => USER);
 
       authService.login(USER).then((response) => {
@@ -84,10 +84,52 @@ describe('Auth Service - ', () => {
   });
 
   describe('register - ', () => {
-    it('Should return error when email is nor exist', () => { });
+    it('Should return error when email is is ready exist', (done) => {
+      jest.spyOn(prismaMock.user, 'findUnique').mockImplementation(() => JSON.parse(JSON.stringify(USER)));
 
-    it('Should return error when password is wrong', () => { });
+      authService.register(USER).then(() => fail("Should throw error"))
+        .catch((response) => {
+          expect(response.status).toEqual(400);
+          expect(response.message).toEqual(`já existe um usuario com esse email: peterson@gmail.com`);
+          done();
+        });
+    });
 
-    it('Should return response when password and email is corret', () => { });
+    it('Should email, name, id and access_token when user is created with success ', (done) => {
+      jest.spyOn(prismaMock.user, 'findUnique').mockImplementation(() => null);
+
+      authService.register(USER).catch(() => fail("Should create user"))
+        .then((response) => {
+          expect(response.email).toEqual(USER.email);
+          expect(response.name).toEqual(USER.name);
+          expect(response.id).toEqual(USER.id);
+          expect(response.access_token).toBeDefined();
+          done();
+        });
+    });
+  });
+
+  describe('forgetPassword - ', () => {
+    it('Should return error when email is not found', (done) => {
+      jest.spyOn(prismaMock.user, 'findUnique').mockImplementation(() => null);
+
+      authService.forgetPassword(USER).then(() => {
+        fail("Should an erro when email is not found");
+      }).catch((error) => {
+        expect(error.message).toEqual('Email não encontrado');
+        done()
+      });
+    });
+
+    it('Should return true when email is found with success', (done) => {
+      jest.spyOn(prismaMock.user, 'findUnique').mockImplementation(() => USER);
+
+      authService.forgetPassword(USER).then((respone) => {
+        expect(respone).toBeTruthy()
+        done()
+      }).catch(() => {
+        fail("Should return true when email is found with success");
+      });
+    });
   });
 });

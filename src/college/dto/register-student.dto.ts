@@ -1,19 +1,16 @@
-import { PartialType } from "@nestjs/mapped-types";
-
-import { CreateUserDTO } from "../../user/dto/create-user.dto";
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { Roles } from "src/shared/enums/role.enum";
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { Roles } from "../../shared/enums/role.enum";
 
 export class RegisterStudiantDTO {
-    @IsNotEmpty()
-    collegeId: number
+  @IsNotEmpty()
+  collegeId: number
 
-    @IsEmail()
-    email: string;
+  @IsEmail()
+  email: string;
 
-    @IsString()
-    documentNumber: string;
+  @IsString()
+  documentNumber: string;
 
-    @IsEnum(Roles)
-    role: Roles = Roles.STUDENT;
-} 
+  @IsEnum(Roles)
+  role: Roles = Roles.STUDENT;
+}

@@ -3,26 +3,26 @@ import { Reflector } from "@nestjs/core"
 import { Observable } from 'rxjs';
 
 import { RolesWithPermission } from '../decorators/role.decorator';
-import { TOKEN_KEY } from 'src/auth/auth.guard';
+import { TOKEN_KEY } from '../../auth/auth.guard';
 import { Roles } from '../enums/role.enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
 
-    constructor(private reflector: Reflector) { }
+  constructor(private reflector: Reflector) { }
 
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        const roles = this.reflector.get(RolesWithPermission, context.getHandler());
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const roles = this.reflector.get(RolesWithPermission, context.getHandler());
 
-        if (!roles) return false;
+    if (!roles) return false;
 
-        const request = context.switchToHttp().getRequest();
-        const user = request[TOKEN_KEY];
+    const request = context.switchToHttp().getRequest();
+    const user = request[TOKEN_KEY];
 
-        return this.matchRoles(roles, user.role);
-    }
+    return this.matchRoles(roles, user.role);
+  }
 
-    private matchRoles(roles: Roles[], userRole: Roles) {
-        return roles.includes(userRole)
-    }
+  private matchRoles(roles: Roles[], userRole: Roles) {
+    return roles.includes(userRole)
+  }
 }

@@ -1,8 +1,8 @@
 import { TestingModule, Test } from "@nestjs/testing";
-import { UserController } from "./user.controller";
-import { AuthGuard } from "../auth/auth.guard";
-import { UserService } from "./user.service";
-import { USER } from "./user.mock";
+import { UserController } from "../user/user.controller";
+import { AuthGuard } from "./auth.guard";
+import { UserService } from "../user/user.service";
+import { USER } from "../user/user.mock";
 import { Roles } from "../shared/enums/role.enum";
 
 describe("UserController", () => {

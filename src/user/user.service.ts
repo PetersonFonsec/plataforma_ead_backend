@@ -21,13 +21,13 @@ export class UserService {
   constructor(private prisma: PrismaService) { }
 
   async createUser(user: CreateUserDTO, active = false) {
-    let { password, email } = user;
+    let { password, email, documentNumber } = user;
 
-    const userExist = await this.prisma.user.findUnique({ where: { email }, select: this.selectFields });
+    const userExist = await this.prisma.user.findFirst({ where: { OR: [{ documentNumber }, { email }] }, select: this.selectFields });
 
     if (userExist) {
       throw new BadRequestException(
-        `já existe um usuario com esse email: ${email}`,
+        `já existe um usuario com esse email: ${email} ou com esse numero de documento ${documentNumber}`,
       );
     }
 

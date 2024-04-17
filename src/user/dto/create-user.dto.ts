@@ -22,6 +22,9 @@ export class CreateUserDTO {
     @IsStrongPassword(rulesPassword)
     password: string;
 
+    @IsStrongPassword(rulesPassword)
+    confirm_password: string;
+
     @IsOptional()
     role: Roles = Roles.STUDENT;
 }

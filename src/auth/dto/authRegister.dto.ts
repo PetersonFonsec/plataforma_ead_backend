@@ -17,4 +17,7 @@ export class AuthRegisterDTO {
 
     @IsStrongPassword(rulesPassword)
     password: string;
+
+    @IsStrongPassword(rulesPassword)
+    confirm_password: string;
 }

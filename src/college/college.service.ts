@@ -61,7 +61,7 @@ export class CollegeService {
   }
 
   async registerUser({ email, documentNumber, collegeId, role }: RegisterStudiantDTO) {
-    const user = { email, documentNumber, password: "", name: "", role };
+    const user = { email, documentNumber, password: "", confirm_password: "", name: "", role };
     const { id } = await this.userService.createUser(user);
 
     return this.prisma.collegeStudent.create({

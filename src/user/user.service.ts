@@ -21,7 +21,12 @@ export class UserService {
   constructor(private prisma: PrismaService) { }
 
   async createUser(user: CreateUserDTO, active = false) {
-    let { password, email, documentNumber } = user;
+    let { password, email, documentNumber, confirm_password } = user;
+
+    if (password != confirm_password) {
+      throw new BadRequestException(`as senhas não são iguais`);
+    }
+
 
     const userExist = await this.prisma.user.findFirst({ where: { OR: [{ documentNumber }, { email }] }, select: this.selectFields });
 
@@ -32,6 +37,8 @@ export class UserService {
     }
 
     user.password = bcrypt.hashSync(password, 8);
+
+    delete user.confirm_password;
 
     return this.prisma.user.create({
       data: { ...user, active },

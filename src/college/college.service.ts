@@ -43,7 +43,9 @@ export class CollegeService {
   async getByUser(userId: number) {
     const user = await this.prisma.college.findMany({
       where: { userId },
-      select: this.selectFields
+      include: {
+        CollegeStyle: true
+      },
     });
 
     if (!user) throw new NotFoundException(`College não encontrado`);

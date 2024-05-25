@@ -27,12 +27,11 @@ export class UserService {
       throw new BadRequestException(`as senhas não são iguais`);
     }
 
-
-    const userExist = await this.prisma.user.findFirst({ where: { OR: [{ documentNumber }, { email }] }, select: this.selectFields });
+    const userExist = await this.prisma.user.findFirst({ where: { OR: [{ documentNumber }, { email }] }, select: { ...this.selectFields, documentNumber: true} });
 
     if (userExist) {
       throw new BadRequestException(
-        `já existe um usuario com esse email: ${email} ou com esse numero de documento ${documentNumber}`,
+        `já existe um usuario com esse email: ${email} ou com esse numero de documento ${userExist.documentNumber}`,
       );
     }
 
@@ -52,7 +51,7 @@ export class UserService {
   }
 
   async getAllUser(): Promise<any[]> {
-    return await this.prisma.user.findMany({ where: { active: true }, select: this.selectFields });
+    return await this.prisma.user.findMany({ select: this.selectFields });
   }
 
   async updateUser(id: number, data: UpdateUserDTO): Promise<any> {

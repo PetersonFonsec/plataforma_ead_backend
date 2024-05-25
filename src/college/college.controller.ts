@@ -11,7 +11,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { RegisterStudiantDTO } from './dto/register-student.dto';
 
 @Controller("college")
-@UseGuards(AuthGuard, RolesGuard)
+// @UseGuards(AuthGuard, RolesGuard)
 export class CollegeController {
   constructor(private readonly collegeService: CollegeService) { }
 

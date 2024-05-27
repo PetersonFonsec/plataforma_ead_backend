@@ -7,6 +7,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { ActiveUserDTO } from './dto/active-user.dto';
+import Mediator from '../shared/events/mediator';
+import { Events } from '../shared/events/events';
 
 @Injectable()
 export class UserService {
@@ -18,7 +20,10 @@ export class UserService {
     id: true,
   }
 
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    private mediator: Mediator,
+  ) { }
 
   async createUser(user: CreateUserDTO, active = false) {
     let { password, email, documentNumber, confirm_password } = user;
@@ -27,7 +32,7 @@ export class UserService {
       throw new BadRequestException(`as senhas não são iguais`);
     }
 
-    const userExist = await this.prisma.user.findFirst({ where: { OR: [{ documentNumber }, { email }] }, select: { ...this.selectFields, documentNumber: true} });
+    const userExist = await this.prisma.user.findFirst({ where: { OR: [{ documentNumber }, { email }] }, select: { ...this.selectFields, documentNumber: true } });
 
     if (userExist) {
       throw new BadRequestException(
@@ -39,10 +44,14 @@ export class UserService {
 
     delete user.confirm_password;
 
-    return this.prisma.user.create({
+    const newUser = this.prisma.user.create({
       data: { ...user, active },
       select: this.selectFields
     });
+
+    await this.mediator.publish(Events.createdNewUser, newUser);
+
+    return newUser;
   }
 
   async activeUser({ id }: ActiveUserDTO) {
@@ -77,7 +86,8 @@ export class UserService {
   }
 
   async validPassword(password, email) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const fields = { ...this.selectFields, password: true };
+    const user = await this.prisma.user.findUnique({ where: { email }, select: fields });
     if (!user) {
       throw new NotFoundException(`Senha ou Email incorretos`);
     }

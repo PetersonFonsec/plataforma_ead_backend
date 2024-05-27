@@ -13,6 +13,11 @@ import { PrismaModule } from './prisma/prisma.module';
 import { CollegeModule } from './college/college.module';
 import { CalendarModule } from './calendar/calendar.module';
 import { AuthModule } from './auth/auth.module';
+import { EmailModule } from './email/email.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { email_config } from './email/mail.config';
+import Mediator from './shared/events/mediator';
 
 @Module({
   imports: [
@@ -24,9 +29,14 @@ import { AuthModule } from './auth/auth.module';
     TaskModule,
     forwardRef(() => AuthModule),
     forwardRef(() => UserModule),
-    ConfigModule.forRoot()
+    ConfigModule.forRoot(),
+    MailerModule.forRoot(email_config),
+    EmailModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    Mediator
+  ],
 })
 export class AppModule { }

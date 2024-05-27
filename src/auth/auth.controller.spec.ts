@@ -1,87 +1,78 @@
 import { TestingModule, Test } from "@nestjs/testing";
-import { UserController } from "../user/user.controller";
-import { AuthGuard } from "./auth.guard";
-import { UserService } from "../user/user.service";
-import { USER } from "../user/user.mock";
-import { Roles } from "../shared/enums/role.enum";
+import { JwtService } from "@nestjs/jwt";
 
-describe("UserController", () => {
+import { AuthController } from "./auth.controller";
+import { UserService } from "../user/user.service";
+import { Roles } from "../shared/enums/role.enum";
+import Mediator from "../shared/events/mediator";
+import { AuthService } from "./auth.service";
+import { AuthGuard } from "./auth.guard";
+import { USER } from "../user/user.mock";
+
+describe("Auth Controller", () => {
+  let authControler: AuthController;
+  let authService: AuthService;
   let userServiceMock;
-  let userControler;
-  let userService;
+  let jwtServiceMock;
 
   beforeEach(async () => {
     userServiceMock = {
-      updatePassword: jest.fn(() => USER),
-      deleteUser: jest.fn(() => USER),
-      updateUser: jest.fn(() => USER),
-      getAllUser: jest.fn(() => Array(3).fill(USER)),
-      createUser: jest.fn(() => USER),
-      find: jest.fn(() => USER),
+      updatePassword: jest.fn(() => USER()),
+      deleteUser: jest.fn(() => USER()),
+      updateUser: jest.fn(() => USER()),
+      getAllUser: jest.fn(() => Array(3).fill(USER())),
+      createUser: jest.fn().mockImplementation((user) => Promise.resolve(user)),
+      find: jest.fn(() => USER()),
+    }
+
+    jwtServiceMock = {
+      sign: jest.fn(() => "TOKEN"),
+      verify: jest.fn(),
+      decode: jest.fn()
     }
 
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [UserController],
+      controllers: [AuthController],
       providers: [
+        Mediator,
+        AuthService,
+        { provide: JwtService, useValue: jwtServiceMock },
         { provide: UserService, useValue: userServiceMock },
       ]
     }).overrideGuard(AuthGuard).useValue({
       canActive: jest.fn(() => true)
     }).compile();
 
-    userControler = module.get<UserController>(UserController);
-    userService = module.get<UserService>(UserService);
+    authControler = module.get<AuthController>(AuthController);
+    authService = module.get<AuthService>(AuthService);
   });
 
   it("Smoke test", () => {
-    expect(userControler).toBeDefined()
-    expect(userService).toBeDefined()
+    expect(authControler).toBeDefined()
+    expect(authService).toBeDefined()
   });
 
-  describe("Create", () => {
-    it(`Should set role ${Roles.DIRECTOR} in payload when call createDirector`, async () => {
-      const result = await userControler.createDirector(USER);
-      expect(result).toEqual(USER);
-    });
+  it(`Should set role ${Roles.DIRECTOR} in payload when call registerDirector`, async () => {
+    const result = await authControler.registerDirector(USER());
 
-    it(`Should set role ${Roles.STUDENT} in payload when call createStudent`, async () => {
-      const result = await userControler.createStudent(USER);
-      expect(result).toEqual(USER);
-    });
-
-    it(`Should set role ${Roles.TEACHER} in payload when call createTeacher`, async () => {
-      const result = await userControler.createTeacher(USER);
-      expect(result).toEqual(USER);
-    });
+    expect(result.email).toEqual(USER().email);
+    expect(result.access_token).toBeDefined();
+    expect(result.role).toEqual(Roles.DIRECTOR);
   });
 
-  describe("Read", () => {
-    it("Should call the get function", async () => {
-      const result = await userControler.get(USER.id);
-      expect(result).toEqual(USER);
-    });
-    it("Should call the getAll function", async () => {
-      const result = await userControler.getAll();
-      expect(result.length).toEqual(3);
-    });
+  it(`Should set role ${Roles.STUDENT} in payload when call registerStudent`, async () => {
+    const result = await authControler.registerStudent(USER());
+
+    expect(result.email).toEqual(USER().email);
+    expect(result.access_token).toBeDefined();
+    expect(result.role).toEqual(Roles.STUDENT);
   });
 
-  describe("Update", () => {
-    it("Should call the find user function", async () => {
-      const result = await userControler.update(USER.id, USER);
-      expect(result).toEqual(USER);
-    });
+  it(`Should set role ${Roles.TEACHER} in payload when call registerTeacher`, async () => {
+    const result = await authControler.registerTeacher(USER());
 
-    it("Should call the find user function", async () => {
-      const result = await userControler.updatePassword(USER);
-      expect(result).toEqual(USER);
-    });
-  });
-
-  describe("Delete", () => {
-    it("Should call crateUser", async () => {
-      const result = await userControler.delete(USER.id);
-      expect(result).toEqual(USER);
-    });
+    expect(result.email).toEqual(USER().email);
+    expect(result.access_token).toBeDefined();
+    expect(result.role).toEqual(Roles.TEACHER);
   });
 });

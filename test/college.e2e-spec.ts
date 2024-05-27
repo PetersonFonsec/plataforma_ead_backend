@@ -3,6 +3,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import * as request from 'supertest';
 
 import { AppModule } from "../src/app.module";
+import { user_director } from "./__mock__/users";
 
 describe("College flow", () => {
   let app: INestApplication;
@@ -16,8 +17,11 @@ describe("College flow", () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    const response  = await request(app.getHttpServer())
-      .post("/auth/login");
+    const response = await request(app.getHttpServer())
+      .post("/auth/login").send({
+        password: 'Senha123!',
+        email: user_director.email
+      });
 
     token = response.body.access_token;
   });
@@ -26,5 +30,5 @@ describe("College flow", () => {
     app.close();
   });
 
-  it("Should return a token when user authenticate", ()=> {});
+  it("Should return a token when user authenticate", () => { });
 });

@@ -14,6 +14,10 @@ export class Cdn implements CdnProvider {
     return this.cdnProvider.upload(image);
   }
 
+  getImage(imageId: any) {
+    return this.cdnProvider.getImage(imageId);
+  }
+
   download(image: any): any {
     return this.cdnProvider.download(image);
   }

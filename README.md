@@ -18,3 +18,4 @@ hostname = postgres_db sim eu sei que escrevi errado um dia corrijo
 
 port 5432
 
+usar a versão 20 do node

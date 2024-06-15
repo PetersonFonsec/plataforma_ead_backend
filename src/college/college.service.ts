@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { collegeCreateDTO } from './dto/college-create.dto';
 import { UserTokenI } from '../shared/interfaces/user-token';
 import { RegisterStudiantDTO } from "./dto/register-student.dto";
+import { Cdn } from '../cdn/cdn';
 
 @Injectable()
 export class CollegeService {
@@ -16,7 +17,11 @@ export class CollegeService {
     thumb: true
   }
 
-  constructor(private prisma: PrismaService, private userService: UserService) { }
+  constructor(
+    private prisma: PrismaService,
+    private userService: UserService,
+    private readonly cdnService: Cdn,
+  ) { }
 
   async create({ name, thumb, primaryColor, secundaryColor }: collegeCreateDTO, user: UserTokenI) {
     const collegeCreate = await this.prisma.college.create({
@@ -27,6 +32,15 @@ export class CollegeService {
         },
       }
     });
+
+    if (thumb) {
+      try {
+        const result = await this.cdnService.upload(thumb).toPromise();
+        thumb = result.result.id;
+      } catch (error) {
+        console.log(error);
+      }
+    }
 
     return this.prisma.collegeStyle.create({
       data: {

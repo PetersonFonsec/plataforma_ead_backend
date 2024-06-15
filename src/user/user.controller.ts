@@ -1,13 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDTO } from './dto/create-user.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 import { UpdatePasswordDTO } from './dto/update-password.dto';
+import { User } from '../shared/decorators/user.decorator';
+import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { storage } from '../shared/utils/storage';
 import { Roles } from '../shared/enums/role.enum';
 import { AuthGuard } from '../auth/auth.guard';
-
+import { UserService } from './user.service';
+import { UserTokenI } from 'src/shared/interfaces/user-token';
 @Controller("users")
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
@@ -39,9 +43,11 @@ export class UserController {
     return this.userService.getAllUser();
   }
 
-  @Patch('/:id')
-  update(@Param('id') id: string, @Body() user: UpdateUserDTO): Promise<any> {
-    return this.userService.updateUser(parseInt(id), user);
+  @Patch()
+  @UseInterceptors(FileInterceptor('photo', storage('user')))
+  update(@UploadedFile() photo, @User() loggedUser: UserTokenI, @Body() user: UpdateUserDTO): Promise<any> {
+    user.photo = photo;
+    return this.userService.updateUser(loggedUser.id, user);
   }
 
   @Patch('/updatePassword/')

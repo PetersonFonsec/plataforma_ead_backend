@@ -47,13 +47,15 @@ export class AuthService {
   async login({ password, email }: AuthLoginDTO) {
     const user = await this.userService.validPassword(password, email);
     const { access_token } = await this.createToken(user);
-    return { ...user, access_token };
+    const all = await this.userService.me(user.id);
+    return { user, ...all, access_token };
   }
 
   async register(payload: AuthRegisterDTO) {
     const user = await this.userService.createUser(payload, true);
     const { access_token } = await this.createToken(user);
-    return { ...user, access_token };
+    const all = await this.userService.me(user.id);
+    return { user, ...all, access_token }
   }
 
   async forgetPassword({ email }: AuthForgetDTO): Promise<any> {

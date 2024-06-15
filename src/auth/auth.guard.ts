@@ -7,23 +7,23 @@ export const TOKEN_KEY = "token";
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-    constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) { }
 
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        const req = context.switchToHttp().getRequest();
-        const { authorization } = req.headers;
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const req = context.switchToHttp().getRequest();
+    const { authorization } = req.headers;
 
-        try {
-            const token = authorization.split(" ")[1];
+    try {
+      const token = authorization.split(" ")[1];
 
-            const isValid = this.authService.checkToken(token);
-            if (!isValid) return false;
+      const isValid = this.authService.checkToken(token);
+      if (!isValid) return false;
 
-            req[TOKEN_KEY] = this.authService.decodeToken(token);
-            return true
-        } catch (error) {
-            return false
-        }
+      req[TOKEN_KEY] = this.authService.decodeToken(token);
+      return true
+    } catch (error) {
+      return false
     }
+  }
 
 }

@@ -1,11 +1,9 @@
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import fs from 'fs';
+import { Observable, map } from "rxjs";
 
 import { CdnProvider, IUploadResponse } from "./cdn.interface";
-import { Observable, map } from "rxjs";
-import { AxiosResponse } from "axios";
-
 @Injectable()
 export class CloudFlareCdn implements CdnProvider {
   #account_id = process.env.CDN_ACCOUNT_ID;

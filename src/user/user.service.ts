@@ -9,6 +9,7 @@ import { UpdateUserDTO } from './dto/update-user.dto';
 import { ActiveUserDTO } from './dto/active-user.dto';
 import Mediator from '../shared/events/mediator';
 import { Events } from '../shared/events/events';
+import { Cdn } from 'src/cdn/cdn';
 
 @Injectable()
 export class UserService {
@@ -23,6 +24,7 @@ export class UserService {
   constructor(
     private prisma: PrismaService,
     private mediator: Mediator,
+    private readonly cdnService: Cdn,
   ) { }
 
   async createUser(user: CreateUserDTO, active = false) {
@@ -66,9 +68,23 @@ export class UserService {
   async updateUser(id: number, data: UpdateUserDTO): Promise<any> {
     delete data.password;
 
-    if (await this.find({ id })) {
-      return this.prisma.user.update({ where: { id }, data, select: this.selectFields });
+    if (data.photo) {
+      try {
+        const result = await this.cdnService.upload(data.photo).toPromise();
+        data.photo = result.result.id;
+      } catch (error) {
+        console.log(error);
+      }
     }
+
+    if (!await this.find({ id })) return;
+
+    const updatedUser = await this.prisma.user.update({ where: { id }, data, select: this.selectFields });
+    if (updatedUser.photo) {
+      updatedUser.photo = await this.cdnService.getImage(updatedUser.photo).toPromise()
+    }
+
+    return updatedUser;
   }
 
   async updatePassword(fields: UpdatePasswordDTO): Promise<any> {
@@ -85,16 +101,60 @@ export class UserService {
       return this.prisma.user.delete({ where: { id }, select: this.selectFields });
   }
 
+  async me(id: number): Promise<any> {
+    let colleges = await this.prisma.college.findMany({
+      where: {
+        userId: id
+      }, select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        name: true,
+        _count: true,
+        CollegeStyle: true,
+        Course: true,
+        CollegeStudent: true,
+      }
+    });
+
+
+    for (let index = 0; index < colleges.length; index++) {
+      const college = colleges[index];
+
+      for (let index = 0; index < college.CollegeStyle.length; index++) {
+        const collegeStyle = college.CollegeStyle[index];
+        if (collegeStyle.thumb) {
+          collegeStyle.thumb = await this.cdnService.getImage(collegeStyle.thumb).toPromise()
+        }
+      }
+    }
+
+    const calendar = await this.prisma.calendar.findMany({
+      where: { studentID: id }, select: {
+        createdAt: true,
+        task: true,
+        updatedAt: true,
+        id: true
+      }
+    })
+
+    return { colleges, calendar }
+  }
+
   async validPassword(password, email) {
     const fields = { ...this.selectFields, password: true };
     const user = await this.prisma.user.findUnique({ where: { email }, select: fields });
     if (!user) {
-      throw new NotFoundException(`Senha ou Email incorretos`);
+      throw new NotFoundException(` Email incorretos`);
     }
 
     const matchPassword = await bcrypt.compare(password, user.password);
     if (!matchPassword) {
-      throw new NotFoundException(`Senha ou Email incorretos`);
+      throw new NotFoundException(`Senha  incorretos`);
+    }
+
+    if (user.photo) {
+      user.photo = await this.cdnService.getImage(user.photo).toPromise()
     }
 
     return user;

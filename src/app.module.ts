@@ -17,6 +17,7 @@ import { EmailModule } from './email/email.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { email_config } from './email/mail.config';
+import { CdnModule } from './cdn/cdn.module';
 import Mediator from './shared/events/mediator';
 
 @Module({
@@ -29,6 +30,7 @@ import Mediator from './shared/events/mediator';
     TaskModule,
     forwardRef(() => AuthModule),
     forwardRef(() => UserModule),
+    forwardRef(() => CdnModule),
     ConfigModule.forRoot(),
     MailerModule.forRoot(email_config),
     EmailModule,

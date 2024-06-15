@@ -2,6 +2,12 @@
 /dist
 /node_modules
 
+# futuro refactor
+*/@core
+
+# assets
+/assets/
+
 # Logs
 logs
 *.log
@@ -36,3 +42,4 @@ lerna-debug.log*
 
 # env
 .env
+.env.test

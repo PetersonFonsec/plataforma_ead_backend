@@ -43,7 +43,6 @@ export class AuthService {
     }
   }
 
-
   async login({ password, email }: AuthLoginDTO) {
     const user = await this.userService.validPassword(password, email);
     const { access_token } = await this.createToken(user);

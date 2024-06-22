@@ -34,12 +34,8 @@ export class CollegeService {
     });
 
     if (thumb) {
-      try {
-        const result = await this.cdnService.upload(thumb).toPromise();
-        thumb = result.result.id;
-      } catch (error) {
-        console.log(error);
-      }
+      const result = await this.cdnService.upload(thumb).toPromise();
+      thumb = result.result.id;
     }
 
     return this.prisma.collegeStyle.create({

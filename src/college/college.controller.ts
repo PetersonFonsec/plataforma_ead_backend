@@ -23,7 +23,6 @@ export class CollegeController {
   @UseInterceptors(FileInterceptor('thumb', storage('college')))
   create(@Body() college: collegeCreateDTO, @User() user: UserTokenI, @UploadedFile() thumb): Promise<any> {
     college.thumb = thumb;
-    console.log(thumb)
     return this.collegeService.create(college, user);
   }
 

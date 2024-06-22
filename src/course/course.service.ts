@@ -1,8 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+
+import { courseCreateDTO } from './dto/course-create.dto';
+import { PrismaService } from '../prisma/prisma.service';
+import { Cdn } from '../cdn/cdn';
 
 @Injectable()
 export class CourseService {
-    getHello(): string {
-        return 'Hello World!';
+  constructor(
+    private prisma: PrismaService,
+    private readonly cdnService: Cdn,
+  ) { }
+
+  async create(payload: courseCreateDTO): Promise<courseCreateDTO> {
+    if (payload.thumb) {
+      const thumb = await this.cdnService.upload(payload.thumb).toPromise();
+      payload.thumb = thumb.result.id;
     }
+
+    return this.prisma.course.create({
+      data: {
+        name: payload.name,
+        thumb: payload.thumb,
+        college: {
+          connect: { id: Number(payload.collegeId) }
+        }
+      },
+    });
+  }
+
+  async get(courseId: string) {
+    const course = await this.prisma.course.findUnique({ where: { id: parseInt(courseId) } })
+    if (!course) return new NotFoundException(`Course with id ${courseId} is not found`);
+    course.thumb = await this.cdnService.getImage(course.thumb).toPromise();
+    return course;
+  }
 }

@@ -117,14 +117,20 @@ export class UserService {
       }
     });
 
-
     for (let index = 0; index < colleges.length; index++) {
       const college = colleges[index];
 
       for (let index = 0; index < college.CollegeStyle.length; index++) {
         const collegeStyle = college.CollegeStyle[index];
         if (collegeStyle.thumb) {
-          collegeStyle.thumb = await this.cdnService.getImage(collegeStyle.thumb).toPromise()
+          collegeStyle.thumb = await this.cdnService.getImage(collegeStyle.thumb).toPromise();
+        }
+      }
+
+      for (let index = 0; index < college.Course.length; index++) {
+        const course = college.Course[index];
+        if (course.thumb) {
+          course.thumb = await this.cdnService.getImage(course.thumb).toPromise();
         }
       }
     }

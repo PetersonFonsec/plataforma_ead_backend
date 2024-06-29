@@ -19,9 +19,7 @@ model User {
   updatedAt      DateTime         @updatedAt
   role           Role             @default(STUDENT)
   Post           Post[]
-  Progress       Progress[]
   Lesson         Lesson[]
-  Calendar       Calendar[]
   College        College[]
   CollegeStudent CollegeStudent[]
 }
@@ -77,6 +75,7 @@ model Course {
   Post      Post[]
   Lesson    Lesson[]
   Task      Task[]
+  Quiz      Quiz[]
 }
 
 model Post {
@@ -105,34 +104,31 @@ model Lesson {
 }
 
 model Task {
-  id        Int        @id @default(autoincrement())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   name      String
-  finish    Boolean    @default(false)
-  student   Course     @relation(fields: [studentID], references: [id])
-  studentID Int
-  Progress  Progress[]
-  Calendar  Calendar[]
+  describe  String
+  Course    Course?  @relation(fields: [courseId], references: [id])
+  courseId  Int?
 }
 
-model Calendar {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  student   User     @relation(fields: [studentID], references: [id])
-  studentID Int
-  task      Task     @relation(fields: [taskId], references: [id])
-  taskId    Int
+model Quiz {
+  id          Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  name        String
+  Course      Course?       @relation(fields: [courseId], references: [id])
+  courseId    Int?
+  QuizOptions QuizOptions[]
 }
 
-model Progress {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  task      Task     @relation(fields: [taskId], references: [id])
-  taskId    Int
-  student   User     @relation(fields: [studentId], references: [id])
-  studentId Int
-  finish    Boolean  @default(false)
+model QuizOptions {
+  id             Int      @id @default(autoincrement())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  title          String
+  correctOptions Boolean  @default(false)
+  Quiz           Quiz?    @relation(fields: [quizId], references: [id])
+  quizId         Int?
 }

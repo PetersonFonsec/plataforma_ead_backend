@@ -18,6 +18,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { email_config } from './email/mail.config';
 import { CdnModule } from './cdn/cdn.module';
+import { MetricsModule } from './metrics/metrics.module';
+import { QuizModule } from './quiz/quiz.module';
 import Mediator from './shared/events/mediator';
 
 @Module({
@@ -34,6 +36,8 @@ import Mediator from './shared/events/mediator';
     ConfigModule.forRoot(),
     MailerModule.forRoot(email_config),
     EmailModule,
+    MetricsModule,
+    QuizModule,
   ],
   controllers: [AppController],
   providers: [

@@ -52,4 +52,6 @@ export async function createCollege() {
 
   console.log('====== Colegios Criados ======');
   console.log({ makenze, makenze_style, senac, senac_style });
+
+  return [senac, makenze];
 }

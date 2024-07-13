@@ -135,16 +135,7 @@ export class UserService {
       }
     }
 
-    const calendar = await this.prisma.calendar.findMany({
-      where: { studentID: id }, select: {
-        createdAt: true,
-        task: true,
-        updatedAt: true,
-        id: true
-      }
-    })
-
-    return { colleges, calendar }
+    return { colleges }
   }
 
   async validPassword(password, email) {

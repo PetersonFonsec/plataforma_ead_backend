@@ -38,7 +38,7 @@ export class CollegeService {
       thumb = result.result.id;
     }
 
-    return this.prisma.collegeStyle.create({
+    await this.prisma.collegeStyle.create({
       data: {
         thumb,
         primaryColor,
@@ -48,6 +48,8 @@ export class CollegeService {
         },
       }
     });
+
+    return this.getById(collegeCreate.id, user.id);
   }
 
   async getByUser(userId: number) {
@@ -63,13 +65,25 @@ export class CollegeService {
   }
 
   async getById(id: number, userId: number) {
-    const user = await this.prisma.college.findUnique({
+    const college = await this.prisma.college.findUnique({
       where: { userId, id },
-      select: this.selectFields
+      select: {
+        CollegeStyle: { where: { collegeId: id } },
+        Course: { where: { collegeId: id } },
+        createdAt: true,
+        updatedAt: true,
+        id: true,
+        userId: true,
+        name: true
+      }
     });
+    if (!college) throw new NotFoundException(`College não encontrado`);
 
-    if (!user) throw new NotFoundException(`College não encontrado`);
-    return user;
+    for (const style of college.CollegeStyle) {
+      style.thumb = await this.cdnService.getImage(style.thumb).toPromise()
+    }
+
+    return college;
   }
 
   async registerUser({ email, documentNumber, collegeId, role }: RegisterStudiantDTO) {

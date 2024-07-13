@@ -26,4 +26,9 @@ export class CourseController {
   get(@Param('id') id: string) {
     return this.courseService.get(id);
   }
+
+  @Get("/:id/content")
+  getContent(@Param('id') id: string) {
+    return this.courseService.getContent(id);
+  }
 }

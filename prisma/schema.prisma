@@ -104,13 +104,13 @@ model Lesson {
 }
 
 model Task {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String
-  describe  String
-  Course    Course?  @relation(fields: [courseId], references: [id])
-  courseId  Int?
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  enunciation String
+  describe    String
+  Course      Course?  @relation(fields: [courseId], references: [id])
+  courseId    Int?
 }
 
 model Quiz {

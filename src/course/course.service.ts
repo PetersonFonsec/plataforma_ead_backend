@@ -17,7 +17,7 @@ export class CourseService {
       payload.thumb = thumb.result.id;
     }
 
-    return this.prisma.course.create({
+    const course = await this.prisma.course.create({
       data: {
         name: payload.name,
         thumb: payload.thumb,
@@ -26,6 +26,10 @@ export class CourseService {
         }
       },
     });
+
+    course.thumb = await this.cdnService.getImage(course.thumb).toPromise()
+
+    return course
   }
 
   async get(courseId: string) {
@@ -33,5 +37,20 @@ export class CourseService {
     if (!course) return new NotFoundException(`Course with id ${courseId} is not found`);
     course.thumb = await this.cdnService.getImage(course.thumb).toPromise();
     return course;
+  }
+
+  async getContent(courseId: string) {
+    const course = await this.prisma.course.findUnique({ where: { id: parseInt(courseId) } })
+    if (!course) return new NotFoundException(`Course with id ${courseId} is not found`);
+
+    const [quizes, tasks, lessons] = await Promise.all(
+      [
+        this.prisma.quiz.findMany({ where: { courseId: parseInt(courseId) } }),
+        this.prisma.task.findMany({ where: { courseId: parseInt(courseId) } }),
+        this.prisma.lesson.findMany({ where: { courseId: parseInt(courseId) } }),
+      ]
+    );
+
+    return { quizes, tasks, lessons }
   }
 }

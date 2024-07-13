@@ -1,14 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 
-
-import { createUsers } from './users.seeds';
 import { createCollege } from './college.seeds';
+import { createCorse } from './course.seeds';
+import { createUsers } from './users.seeds';
+import { createQuiz } from './quiz.seeds';
 
 const prisma = new PrismaClient()
 
 async function main() {
   await createUsers()
-  await createCollege()
+  const [collage] = await createCollege()
+  const [course] = await createCorse(collage.id)
+  createQuiz(course.id)
 }
 
 main()

@@ -20,6 +20,7 @@ import { email_config } from './email/mail.config';
 import { CdnModule } from './cdn/cdn.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { QuizModule } from './quiz/quiz.module';
+import { LessonModule } from './lesson/lesson.module';
 import Mediator from './shared/events/mediator';
 
 @Module({
@@ -38,6 +39,7 @@ import Mediator from './shared/events/mediator';
     EmailModule,
     MetricsModule,
     QuizModule,
+    LessonModule,
   ],
   controllers: [AppController],
   providers: [

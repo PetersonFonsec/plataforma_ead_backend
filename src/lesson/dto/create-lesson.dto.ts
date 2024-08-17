@@ -1,11 +1,25 @@
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 export class CreateLessonDto {
-  description: string;
-  urlContent: string;
-  createdAt: string;
-  updatedAt: string;
-  authorId: number;
-  courseId: number;
+  @IsString()
+  @IsNotEmpty()
   title: string;
-  id: number;
+
+  @IsString()
+  @IsNotEmpty()
+  description: string;
+
+  @IsString()
+  @IsOptional()
+  content: string;
+
+  @IsOptional()
+  @IsString()
+  urlContent: string;
+
+  @IsString()
+  @IsNotEmpty()
+  courseId: string;
+
+  @IsOptional()
   fileVideo: any;
 }

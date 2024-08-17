@@ -13,7 +13,7 @@ export class LessonService {
     private readonly cdnService: Cdn,
   ) { }
 
-  async create(createLessonDto: CreateLessonDto): Promise<any> {
+  async create(createLessonDto: CreateLessonDto, authorId: number): Promise<any> {
     if (createLessonDto.fileVideo) {
       const urlContent = await this.cdnService.upload(createLessonDto.fileVideo).toPromise();
       createLessonDto.urlContent = urlContent.result.id;
@@ -25,7 +25,7 @@ export class LessonService {
         description: createLessonDto.description,
         urlContent: createLessonDto.urlContent,
         author: {
-          connect: { id: Number(createLessonDto.authorId) }
+          connect: { id: Number(authorId) }
         },
         course: {
           connect: { id: Number(createLessonDto.courseId) }

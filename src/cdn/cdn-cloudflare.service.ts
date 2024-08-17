@@ -1,18 +1,22 @@
 import { HttpService } from "@nestjs/axios";
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import fs from 'fs';
-import { Observable, map } from "rxjs";
+import { Observable, map, tap } from "rxjs";
 
 import { CdnProvider, IUploadResponse } from "./cdn.interface";
+import { CloudFlareStreamUpload } from "./cloudflare.interface";
 @Injectable()
 export class CloudFlareCdn implements CdnProvider {
   #account_id = process.env.CDN_ACCOUNT_ID;
   #api_base = process.env.CDN_BASE_URL;
   #token = process.env.CDN_API_TOKEN;
   #hash = process.env.CDN_HASH;
+  readonly #streamTypes = ["video/mp4"];
+  readonly #imageTypes = [''];
+  readonly #byteValue = 1048576;
 
   get url(): string {
-    const endpoint = this.#api_base + '/client/v4/accounts/<ACCOUNT_ID>/images/v1';
+    const endpoint = this.#api_base + '/client/v4/accounts/<ACCOUNT_ID>';
     return endpoint.replace('<ACCOUNT_ID>', this.#account_id);
   }
 
@@ -21,13 +25,58 @@ export class CloudFlareCdn implements CdnProvider {
     if (!this.#account_id) throw new Error('Sem CDN_ACCOUNT_ID do cloud flare');
   }
 
-  upload(image: any): Observable<IUploadResponse> {
+
+  upload(blobData: any): Observable<IUploadResponse> {
+    if (this.#streamTypes.includes(blobData.mimetype)) {
+      return this.uploadStream(blobData)
+    };
+
+    return this.uploadImage(blobData)
+  }
+
+  uploadStream(stream: any): Observable<IUploadResponse> {
+    const streamblob = fs.readFileSync(stream.path);
+    const formData = new FormData();
+    const blobData = new Blob([streamblob]);
+
+    if (blobData.size > (200 * this.#byteValue)) {
+      throw new BadRequestException("Tamanho maximo do arquivo de video é de 200 megas.");
+    }
+
+    formData.append("file", blobData, stream.filename);
+
+    return this.httpService.post<CloudFlareStreamUpload>(`${this.url}/stream`, formData, {
+      headers: {
+        Authorization: `Bearer ${this.#token}`
+      }
+    }).pipe(
+      map(res => res.data),
+      map(res => this.convertStreamReturnInUploadedResponse(res))
+    )
+  }
+
+  private convertStreamReturnInUploadedResponse(res: CloudFlareStreamUpload): IUploadResponse {
+    return {
+      result: {
+        id: res.result.uid,
+        filename: res.result.meta.name,
+        uploaded: res.result.uploaded,
+        requireSignedURLs: res.result.requireSignedURLs,
+        variants: []
+      },
+      success: res.success,
+      errors: res.errors,
+      messages: res.messages
+    }
+  }
+
+  uploadImage(image: any): Observable<IUploadResponse> {
     const imageblob = fs.readFileSync(image.path);
     const formData = new FormData();
     const blobData = new Blob([imageblob]);
     formData.append("file", blobData, image.filename);
 
-    return this.httpService.post<IUploadResponse>(this.url, formData, {
+    return this.httpService.post<IUploadResponse>(`${this.url}/images/v1`, formData, {
       headers: {
         Authorization: `Bearer ${this.#token}`
       }

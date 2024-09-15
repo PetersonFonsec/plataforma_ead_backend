@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["tracing"]
 }
 
 datasource db {
@@ -41,6 +42,7 @@ model College {
   Course         Course[]
   CollegeStyle   CollegeStyle[]
   CollegeStudent CollegeStudent[]
+  MediaRelation  MediaRelation[]
 }
 
 model CollegeStudent {
@@ -131,4 +133,21 @@ model QuizOptions {
   correctOptions Boolean  @default(false)
   Quiz           Quiz?    @relation(fields: [quizId], references: [id])
   quizId         Int?
+}
+
+model Media {
+  id            Int             @id @default(autoincrement())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  type          String
+  cdnId         String          @unique
+  MediaRelation MediaRelation[]
+}
+
+model MediaRelation {
+  id        Int      @id @default(autoincrement())
+  Media     Media?   @relation(fields: [mediaId], references: [id])
+  mediaId   Int
+  College   College? @relation(fields: [collegeId], references: [id])
+  collegeId Int
 }

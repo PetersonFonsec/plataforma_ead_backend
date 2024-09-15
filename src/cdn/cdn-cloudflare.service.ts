@@ -25,7 +25,6 @@ export class CloudFlareCdn implements CdnProvider {
     if (!this.#account_id) throw new Error('Sem CDN_ACCOUNT_ID do cloud flare');
   }
 
-
   upload(blobData: any): Observable<IUploadResponse> {
     if (this.#streamTypes.includes(blobData.mimetype)) {
       return this.uploadStream(blobData)
@@ -34,7 +33,7 @@ export class CloudFlareCdn implements CdnProvider {
     return this.uploadImage(blobData)
   }
 
-  uploadStream(stream: any): Observable<IUploadResponse> {
+  uploadStream(stream: any, creatorId?: string): Observable<IUploadResponse> {
     const streamblob = fs.readFileSync(stream.path);
     const formData = new FormData();
     const blobData = new Blob([streamblob]);
@@ -44,6 +43,7 @@ export class CloudFlareCdn implements CdnProvider {
     }
 
     formData.append("file", blobData, stream.filename);
+    // formData.append("creator", creatorId);
 
     return this.httpService.post<CloudFlareStreamUpload>(`${this.url}/stream`, formData, {
       headers: {
@@ -92,5 +92,15 @@ export class CloudFlareCdn implements CdnProvider {
 
   download(image: any): any {
     return
+  }
+
+  SubscribeStreamNotifications() {
+    return this.httpService.put<CloudFlareStreamUpload>(`${this.url}/stream/webhook`, {
+      notificationUrl: ""
+    }, {
+      headers: {
+        Authorization: `Bearer ${this.#token}`
+      }
+    })
   }
 }

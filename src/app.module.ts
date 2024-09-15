@@ -21,6 +21,7 @@ import { CdnModule } from './cdn/cdn.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { QuizModule } from './quiz/quiz.module';
 import { LessonModule } from './lesson/lesson.module';
+import { WebhookModule } from './webhook/webhook.module';
 import Mediator from './shared/events/mediator';
 
 @Module({
@@ -40,6 +41,7 @@ import Mediator from './shared/events/mediator';
     MetricsModule,
     QuizModule,
     LessonModule,
+    WebhookModule,
   ],
   controllers: [AppController],
   providers: [

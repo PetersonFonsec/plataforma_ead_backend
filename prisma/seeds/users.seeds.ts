@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-import {user_director, user_student, user_teacher} from "../../test/__mock__/users";
+import { user_director, user_student, user_teacher } from "../../test/__mock__/users";
 
 const prisma = new PrismaClient()
 
@@ -25,4 +25,5 @@ export async function createUsers() {
 
   console.log('====== Usuarios Criados ======');
   console.log({ director, student, teacher });
+  return { director, student, teacher };
 }

@@ -1,4 +1,4 @@
 export const course = {
   name: 'Conceitos de computação I',
-  thumb: 'bde971f9-926c-4594-e041-2b270bb03a00',
+  thumb: '2bc5647a-6236-4cc6-57e0-d2b6a267fb00',
 }

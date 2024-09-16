@@ -19,9 +19,9 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Odin backend')
-    .setDescription('The cats API description')
+    .setDescription('The odin backend API documentation')
     .setVersion('1.0')
-    .addTag('cats')
+    .addTag('Odin')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

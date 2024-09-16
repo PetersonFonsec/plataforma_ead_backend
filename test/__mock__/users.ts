@@ -8,7 +8,8 @@ export const user_student = {
   documentNumber: '36482444006',
   password: bcrypt.hashSync('Senha123!', 8),
   active: false,
-  role: Roles.STUDENT
+  role: Roles.STUDENT,
+  photo: "ce7509f2-0d8f-490e-81a6-1531005e8100"
 }
 
 export const user_director = {
@@ -17,7 +18,8 @@ export const user_director = {
   documentNumber: '36479747062',
   password: bcrypt.hashSync('Senha123!', 8),
   active: true,
-  role: Roles.DIRECTOR
+  role: Roles.DIRECTOR,
+  photo: "ce7509f2-0d8f-490e-81a6-1531005e8100"
 }
 
 export const user_director_secundary = {
@@ -26,7 +28,8 @@ export const user_director_secundary = {
   documentNumber: '69793804009',
   password: bcrypt.hashSync('Senha123!', 8),
   active: true,
-  role: Roles.DIRECTOR
+  role: Roles.DIRECTOR,
+  photo: "ce7509f2-0d8f-490e-81a6-1531005e8100"
 }
 
 export const user_teacher = {
@@ -35,5 +38,6 @@ export const user_teacher = {
   documentNumber: '90146116097',
   password: bcrypt.hashSync('Senha123!', 8),
   active: false,
-  role: Roles.TEACHER
+  role: Roles.TEACHER,
+  photo: "ce7509f2-0d8f-490e-81a6-1531005e8100"
 }

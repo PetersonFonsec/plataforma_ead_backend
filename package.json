@@ -25,7 +25,7 @@
     "posttest:e2e": "dotenv -e .env.test -- prisma migrate reset",
     "prisma:seed": "ts-node prisma/seeds/seeds.ts",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:reset": "prisma prisma migrate reset"
+    "prisma:reset": "prisma migrate reset"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",

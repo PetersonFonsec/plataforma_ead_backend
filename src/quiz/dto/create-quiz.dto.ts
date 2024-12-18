@@ -2,7 +2,7 @@ import { IsString, IsNumber, IsArray, MaxLength, IsBoolean, MinLength, IsOptiona
 
 export class CreateQuizDto {
   @IsString()
-  name: string;
+  title: string;
 
   @IsNumber()
   courseId: number;

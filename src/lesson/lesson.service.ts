@@ -24,6 +24,7 @@ export class LessonService {
         title: createLessonDto.title,
         description: createLessonDto.description,
         urlContent: createLessonDto.urlContent,
+        content: createLessonDto.content,
         author: {
           connect: { id: Number(authorId) }
         },
@@ -40,8 +41,12 @@ export class LessonService {
     return `This action returns all lesson`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} lesson`;
+  findOneById(id: number) {
+    return this.prisma.lesson.findUnique({
+      where: {
+        id
+      }
+    });
   }
 
   update(id: number, updateLessonDto: UpdateLessonDto) {

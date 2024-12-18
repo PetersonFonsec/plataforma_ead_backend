@@ -6,6 +6,7 @@ import { createUsers } from './users.seeds';
 import { createQuiz } from './quiz.seeds';
 import { createLesson } from './lesson.seeds';
 import { createPost } from './post.seeds';
+import { createEvents } from './events.seeds';
 
 const prisma = new PrismaClient()
 
@@ -15,6 +16,7 @@ async function main() {
   const [course] = await createCorse(collage.id);
 
   createQuiz(course.id);
+  createEvents(course.id);
   createLesson(director.id, course.id);
   createPost(director.id, course.id, course.id);
 }

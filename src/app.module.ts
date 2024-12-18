@@ -22,6 +22,7 @@ import { MetricsModule } from './metrics/metrics.module';
 import { QuizModule } from './quiz/quiz.module';
 import { LessonModule } from './lesson/lesson.module';
 import { WebhookModule } from './webhook/webhook.module';
+import { EventModule } from './event/event.module';
 import Mediator from './shared/events/mediator';
 
 @Module({
@@ -42,6 +43,7 @@ import Mediator from './shared/events/mediator';
     QuizModule,
     LessonModule,
     WebhookModule,
+    EventModule,
   ],
   controllers: [AppController],
   providers: [

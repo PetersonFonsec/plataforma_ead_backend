@@ -6,21 +6,16 @@ import { collegeCreateDTO } from './dto/college-create.dto';
 import { UserTokenI } from '../shared/interfaces/user-token';
 import { RegisterStudiantDTO } from "./dto/register-student.dto";
 import { Cdn } from '../cdn/cdn';
+import Mediator from 'src/shared/events/mediator';
+import { Events } from 'src/shared/events/events';
 
 @Injectable()
 export class CollegeService {
-  private readonly selectFields = {
-    id: true,
-    createdAt: true,
-    updatedAt: true,
-    name: true,
-    thumb: true
-  }
-
   constructor(
     private prisma: PrismaService,
     private userService: UserService,
     private readonly cdnService: Cdn,
+    private mediator: Mediator
   ) { }
 
   async create({ name, thumb, primaryColor, secundaryColor }: collegeCreateDTO, user: UserTokenI) {
@@ -87,10 +82,9 @@ export class CollegeService {
   }
 
   async registerUser({ email, documentNumber, collegeId, role }: RegisterStudiantDTO) {
-    const user = { email, documentNumber, password: "", confirm_password: "", name: "", role };
-    const { id } = await this.userService.createUser(user);
+    const { id } = await this.userService.find({ documentNumber });
 
-    return this.prisma.collegeStudent.create({
+    const result = this.prisma.collegeStudent.create({
       data: {
         user: {
           connect: { id }
@@ -98,8 +92,11 @@ export class CollegeService {
         college: {
           connect: { id: collegeId }
         },
-
       }
     });
+
+    this.mediator.publish(Events.registerUser, result);
+
+    return result;
   }
 }

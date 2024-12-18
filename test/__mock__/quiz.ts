@@ -1,5 +1,5 @@
 export const quiz = {
-  name: "Qual das seguintes afirmações sobre JavaScript é verdadeira?",
+  title: "Qual das seguintes afirmações sobre JavaScript é verdadeira?",
   options: [
     {
       "title": "JavaScript é uma linguagem de programação fortemente tipada, onde todos os tipos de dados devem ser declarados explicitamente.",

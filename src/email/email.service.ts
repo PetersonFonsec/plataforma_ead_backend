@@ -21,6 +21,10 @@ export class EmailService {
     this.mediator.on(Events.forgetPassword, async (user) => {
       await this.recoveryPassword(user)
     });
+
+    this.mediator.on(Events.registerUser, async (user) => {
+      await this.registerUser(user)
+    });
   }
 
   async recoveryPassword({ token, name, email }: any) {
@@ -36,6 +40,15 @@ export class EmailService {
     await this.mailer.sendMail({
       subject: `${name} Seja bem vindo !!`,
       template: 'wellcome',
+      context: { name },
+      to: email,
+    });
+  }
+
+  async registerUser({ name, email }: any) {
+    await this.mailer.sendMail({
+      subject: `${name} Seja bem vindo !!`,
+      template: 'register-user',
       context: { name },
       to: email,
     });

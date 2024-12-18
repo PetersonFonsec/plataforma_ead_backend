@@ -3,4 +3,5 @@ export enum Events {
   createdNewQuiz = "CREATED_NEW_QUIZ",
   createdNewPost = "CREATED_NEW_POST",
   forgetPassword = "FORGET_PASSWORD",
+  registerUser = "REGISTER_USER",
 }

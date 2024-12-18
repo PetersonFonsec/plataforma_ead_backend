@@ -120,7 +120,7 @@ export class UserService {
     for (let index = 0; index < colleges.length; index++) {
       const college = colleges[index];
 
-      for (let index = 0; index < college.CollegeStyle.length; index++) {
+      for (let index = 0; index < college.CollegeStyle.length; index++) {//TODO - repensar essa forma de salvar as estilizações de escolas talvez o ideil seria um noSql
         const collegeStyle = college.CollegeStyle[index];
         if (collegeStyle.thumb) {
           collegeStyle.thumb = await this.cdnService.getImage(collegeStyle.thumb).toPromise();
@@ -132,6 +132,7 @@ export class UserService {
         if (course.thumb) {
           course.thumb = await this.cdnService.getImage(course.thumb).toPromise();
         }
+        // this.eventService.findByCourse(+id)
       }
     }
 

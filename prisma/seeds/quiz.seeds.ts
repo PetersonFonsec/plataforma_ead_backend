@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 export async function createQuiz(courseId: number) {
   const Quiz = await prisma.quiz.create({
     data: {
-      name: quiz.name,
+      title: quiz.title,
       courseId,
     }
   });

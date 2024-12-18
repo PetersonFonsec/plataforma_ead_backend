@@ -79,6 +79,7 @@ model Course {
   Lesson    Lesson[]
   Task      Task[]
   Quiz      Quiz[]
+  Event     Event[]
 }
 
 model Post {
@@ -100,6 +101,7 @@ model Lesson {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   description String
+  content     String   @default("")
   title       String
   urlContent  String
   author      User     @relation(fields: [authorId], references: [id])
@@ -122,7 +124,7 @@ model Quiz {
   id          Int           @id @default(autoincrement())
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  name        String
+  title       String
   Course      Course?       @relation(fields: [courseId], references: [id])
   courseId    Int?
   QuizOptions QuizOptions[]
@@ -153,4 +155,23 @@ model MediaRelation {
   mediaId   Int
   College   College? @relation(fields: [collegeId], references: [id])
   collegeId Int
+}
+
+model Event {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  type        EventTypes @default(OTHERS)
+  title       String
+  description String
+  date        DateTime
+  course      Course     @relation(fields: [courseId], references: [id])
+  courseId    Int
+}
+
+enum EventTypes {
+  MEETING
+  PROOF
+  LIVECLASS
+  OTHERS
 }

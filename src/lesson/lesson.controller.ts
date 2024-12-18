@@ -31,7 +31,7 @@ export class LessonController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.lessonService.findOne(+id);
+    return this.lessonService.findOneById(+id);
   }
 
   @Patch(':id')

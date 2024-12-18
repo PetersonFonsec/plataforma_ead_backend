@@ -6,6 +6,7 @@ import { CollegeService } from './college.service';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
 import { CdnModule } from '../cdn/cdn.module';
+import Mediator from 'src/shared/events/mediator';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { CdnModule } from '../cdn/cdn.module';
   ],
   exports: [CollegeService],
   controllers: [CollegeController],
-  providers: [CollegeService],
+  providers: [CollegeService, Mediator],
 })
 export class CollegeModule { }

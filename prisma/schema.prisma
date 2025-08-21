@@ -68,18 +68,19 @@ model CollegeStyle {
 }
 
 model Course {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String
-  thumb     String
-  college   College  @relation(fields: [collegeId], references: [id])
-  collegeId Int
-  Post      Post[]
-  Lesson    Lesson[]
-  Task      Task[]
-  Quiz      Quiz[]
-  Event     Event[]
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  description String   @default("Descrição do curso")
+  thumb       String
+  college     College  @relation(fields: [collegeId], references: [id])
+  collegeId   Int
+  Post        Post[]
+  Lesson      Lesson[]
+  Task        Task[]
+  Quiz        Quiz[]
+  Event       Event[]
 }
 
 model Post {

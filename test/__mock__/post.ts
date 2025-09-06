@@ -46,3 +46,83 @@ export const post_image = (authorId, courseId, collegeId) => {
     }
   }
 }
+
+export const post_seed_1 = (authorId, courseId, collegeId) => ({
+  content: "<h2>Bem-vindo ao curso!</h2><p>Este é o primeiro post de boas-vindas para todos os alunos. Aproveitem o conteúdo!</p>",
+  published: true,
+  author: { connect: { id: Number(authorId) } },
+  course: { connect: { id: Number(courseId) } },
+  college: { connect: { id: Number(collegeId) } }
+});
+
+export const post_seed_2 = (authorId, courseId, collegeId) => ({
+  content: "<h2>Dica de estudo</h2><p>Reserve um tempo diário para revisar o material e tirar dúvidas no fórum.</p>",
+  published: true,
+  author: { connect: { id: Number(authorId) } },
+  course: { connect: { id: Number(courseId) } },
+  college: { connect: { id: Number(collegeId) } }
+});
+
+export const post_seed_3 = (authorId, courseId, collegeId) => ({
+  content: "<h2>Material complementar</h2><p>Confira o PDF anexo para aprofundar seus conhecimentos sobre o tema da semana.</p>",
+  published: true,
+  author: { connect: { id: Number(authorId) } },
+  course: { connect: { id: Number(courseId) } },
+  college: { connect: { id: Number(collegeId) } }
+});
+
+export const post_seed_4 = (authorId, courseId, collegeId) => ({
+  content: "<h2>Enquete</h2><p>Qual tema você gostaria de ver nas próximas aulas? Responda nos comentários!</p>",
+  published: true,
+  author: { connect: { id: Number(authorId) } },
+  course: { connect: { id: Number(courseId) } },
+  college: { connect: { id: Number(collegeId) } }
+});
+
+export const post_seed_5 = (authorId, courseId, collegeId) => ({
+  content: "<h2>Evento ao vivo</h2><p>Participe da nossa live na próxima sexta-feira às 19h. Link será enviado por e-mail.</p>",
+  published: true,
+  author: { connect: { id: Number(authorId) } },
+  course: { connect: { id: Number(courseId) } },
+  college: { connect: { id: Number(collegeId) } }
+});
+
+export const post_seed_6 = (authorId, courseId, collegeId) => ({
+  content: "<h2>Atualização do curso</h2><p>Novos módulos foram adicionados! Acesse a plataforma para conferir.</p>",
+  published: true,
+  author: { connect: { id: Number(authorId) } },
+  course: { connect: { id: Number(courseId) } },
+  college: { connect: { id: Number(collegeId) } }
+});
+
+export const post_seed_7 = (authorId, courseId, collegeId) => ({
+  content: "<h2>Parabéns!</h2><p>Parabenizamos todos que concluíram o primeiro módulo. Continuem assim!</p>",
+  published: true,
+  author: { connect: { id: Number(authorId) } },
+  course: { connect: { id: Number(courseId) } },
+  college: { connect: { id: Number(collegeId) } }
+});
+
+export const post_seed_8 = (authorId, courseId, collegeId) => ({
+  content: "<h2>FAQ</h2><p>Confira as perguntas frequentes sobre o curso na seção de ajuda.</p>",
+  published: true,
+  author: { connect: { id: Number(authorId) } },
+  course: { connect: { id: Number(courseId) } },
+  college: { connect: { id: Number(collegeId) } }
+});
+
+export const post_seed_9 = (authorId, courseId, collegeId) => ({
+  content: "<h2>Desafio da semana</h2><p>Resolva o exercício proposto e poste sua solução até domingo.</p>",
+  published: true,
+  author: { connect: { id: Number(authorId) } },
+  course: { connect: { id: Number(courseId) } },
+  college: { connect: { id: Number(collegeId) } }
+});
+
+export const post_seed_10 = (authorId, courseId, collegeId) => ({
+  content: "<h2>Feedback</h2><p>Deixe seu feedback sobre o curso para que possamos melhorar ainda mais!</p>",
+  published: true,
+  author: { connect: { id: Number(authorId) } },
+  course: { connect: { id: Number(courseId) } },
+  college: { connect: { id: Number(collegeId) } }
+});

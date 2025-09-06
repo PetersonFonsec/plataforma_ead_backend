@@ -1,6 +1,6 @@
 import otelSDK from "./tracing";
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import helmet from 'helmet';
@@ -13,7 +13,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
-  app.useGlobalPipes(new ValidationPipe());
+
+  app.enableVersioning({ type: VersioningType.URI });
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+
   app.use(helmet());
   // app.use(compression());
 

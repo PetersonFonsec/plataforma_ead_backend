@@ -47,7 +47,6 @@ export class PaginationService<T> {
 
     const where = this.buildSearchFilter(search);
 
-    console.log('LIMIT', limit!);
     const [total, data] = await this.prisma.$transaction([
       this.modelName.count({ where }),
       this.modelName.findMany({
